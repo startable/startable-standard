@@ -199,7 +199,7 @@ types
 
 Table 3 Examples of the various block types
 
-<embed src="media/image5.emf" width="519" height="399" />
+![](media/block-examples.png)
 
 Sections 4.1 to 4.4 describe the structure of the various block types.
 
@@ -238,14 +238,23 @@ A table block consists of:
 These elements are illustrated in Figure 1 and described further below.
 An annotated example is shown in Figure 2.
 
-<embed src="media/image6.emf" width="349" height="152" />
 
-<span id="_Ref478052722" class="anchor"></span>Figure 2 Elements of a
-table block
 
-<embed src="media/image7.emf" width="511" height="171" />
+| **<descriptor> |                |                |      |
+| -------------- | -------------- | -------------- | ---- |
+| <destinations> |                |                |      |
+| <col 1 header> | <col 2 header> | <col 3 header> | …    |
+| <col 1 unit>   | <col 2 unit>   | <col 3 unit>   | …    |
+| <col 1 val 1>  | <col 2 val 1>  | <col 3 val 1>  | …    |
+| <col 1 val 2>  | <col 2 val 2>  | <col 3 val 2>  | …    |
+| <col 1 val 3>  | <col 2 val 3>  | <col 3 val 3>  | …    |
+| …              | …              | …              | …    |
 
-<span id="_Ref478052836" class="anchor"></span>Figure 3 Annotated
+Figure 2 Elements of a table block
+
+![Annotated example of a table block](media/table-block-example.png)
+
+Figure 3 Annotated
 example of a table block
 
 #### Descriptor
