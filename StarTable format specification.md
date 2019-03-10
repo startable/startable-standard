@@ -20,8 +20,7 @@ The StarTable format traces its origins to the Optimon project at Ørsted in the
 
 
 
-Atomic types and values
-=======================
+## Atomic types and values
 
 Cells each contain a value of one of the following atomic types:
 
@@ -37,8 +36,7 @@ Empty cells are to be treated as containing an empty string. Empty
 floating-points or integer cell may be represented with either ‘-’,
 ‘nan’, ‘NaN’, or ‘NAN’.
 
-Restrictions on strings
------------------------
+### Restrictions on strings
 
 Strings may not contain characters used to represent the end of a line
 (such as end of line and line feed) as this would introduce ambiguity
@@ -47,8 +45,7 @@ throughout this document; there are a few instances where we indicate
 that a given field can consist of “any string”; this should be
 understood as, any string not including these forbidden characters.
 
-Additional restrictions on symbol strings
------------------------------------------
+### Additional restrictions on symbol strings
 
 Symbols, such as table descriptors, column names, and destinations (all
 of which are described further in this document), are represented as
@@ -61,8 +58,7 @@ strings. These symbol strings are subject to the following restrictions:
 
 -   General restrictions on strings, described in Section 2.1
 
-Hierarchical structure
-======================
+## Hierarchical structure
 
 The high-level hierarchical structure of the StarTable format is
 illustrated in Table 1.
@@ -82,14 +78,13 @@ suited to containing only one sheet, while others (e.g. Excel workbook)
 can contain multiple sheets. Since the StarTable format is file-format
 agnostic, files are not part of the StarTable format proper, and a
 detailed discussion of file formats is beyond the scope of this
-document. A summary discussion is provided in Section 4.
+document. A summary discussion is provided further below.
 
-<img src="media/image4.png" width="362" height="442" />
 
-Figure 1 High-level hierarchical structure of StarTable format
+![High-level hierarchical structure of the StarTable format](media/hierarchical-structure-diagram.png)
 
 File format
-===========
+-----------
 
 To be StarTable-ready, a file format must be able to represent a
 two-dimensional array of cells, with the array being of arbitrary length
@@ -113,14 +108,12 @@ For details related to specific file formats, see Appendix A.
 
 The visual examples in this document have been generated in Excel.
 
-Sheets
-======
+## Sheets
 
 A StarTable sheet consists of an arbitrary number of rows, each
 containing an arbitrary number of cells.
 
-Blocks
-======
+## Blocks
 
 The rows of a StarTable sheet are arranged as a series of “blocks”. Any
 given row can only be a member of one block. Rows that are not in a
@@ -210,8 +203,7 @@ Table 3 Examples of the various block types
 
 Sections 4.1 to 4.4 describe the structure of the various block types.
 
-Directive block
----------------
+### Directive block
 
 \#\#\#\#
 
@@ -221,8 +213,7 @@ Application-specific
 
 Typical use cases revision history, include, …
 
-Table block
------------
+### Table block
 
 A table block consists of:
 
@@ -257,7 +248,7 @@ table block
 <span id="_Ref478052836" class="anchor"></span>Figure 3 Annotated
 example of a table block
 
-### Descriptor
+#### Descriptor
 
 Along with its prefix \*\*, the descriptor marks the first row of the
 table block. It is in the first column.
@@ -267,20 +258,20 @@ be any single-line string subject to restrictions on symbol strings, and
 not starting with \* (so as not to be confused, in conjunction with its
 prefix \*\*, with a directive block start marker).
 
-### Destination list
+#### Destination list
 
 The destination list is in the first-column cell on the second row of
 the table block. It is a space-delimited list of destination symbols.
 
 What’s a destination? Oh, boy. Here we go.
 
-### Table columns
+#### Table columns
 
 Table columns start on the third row of the table block and occupy the
 remaining rows of the table block all the way to its end. The cells of a
 given table column are arranged vertically, counting from the top down.
 
-#### Header
+##### Header
 
 The first cell of a table column is the header symbol, which is intended
 to describe the contents of the column. It can be any string.
@@ -288,7 +279,7 @@ to describe the contents of the column. It can be any string.
 The header must be unique within the current table i.e. no two columns
 of a given table may have the same header.
 
-#### Data type / unit indicator
+##### Data type / unit indicator
 
 The second cell of a table column is the data type / unit indicator
 symbol, which specifies how the column’s values should be interpreted.
@@ -324,13 +315,12 @@ unit indicators
 </tbody>
 </table>
 
-#### Values
+##### Values
 
 The remaining cells of a table column contain data values, which can be
 of any of the atomic types described in Section 2.
 
-Template block
---------------
+### Template block
 
 Template data embedded in template files allow input files to be matched
 against a template, and provide description of input data.
@@ -478,15 +468,13 @@ The main purpose of the template system is to aid work on the file
 level, where destinations cannot be resolved. For this reason, tables
 are identified by descriptors only for the purpose of template-matching.
 
-Metadata line block
--------------------
+### Metadata line block
 
 \#\#\#
 
-Document structure: the layer model
-==================
+## Document structure: the layer model
 
-## Level 0 - Low level file structure
+### Level 0 - Low level file structure
 
 The StarTable format is file-format agnostic, in the sense that it can incorporate
 any file format that allows a representation as a one or more sheets each holding 
@@ -506,29 +494,29 @@ An empty cell should be treated as an empty string
 
 For details related to specific file formats, see Appendix A.
 
-## Level 1 - Logical file structure
+### Level 1 - Logical file structure
 
 Level 1 processing maps a list of sheets to a single list of blocks of the types detailed below.
 A row on the sheet can only be a member of one block, but all rows need not be in a block.
 The block syntax detailed below is designed so that the rows of the sheet may be split into
 blocks by only considering the first column.
 
-### Directive block
+#### Directive block
 
 A directive block start is indicated by a first column string value starting with `***`.
 A directive block is terminated by an empty first column cell or a block start.
 
-### Table block
+#### Table block
 
 A table block start is indicated by a first column string value starting with `**`.
 A table block is terminated by an empty first column cell or a block start.
 
-### Template block
+#### Template block
 
 A table block start is indicated by a first column string value starting with `:`.
 A table block is terminated by an empty first column cell or a block start.
 
-### Metadata line block
+#### Metadata line block
 
 Metadata line blocks are only accepted before any other block types.
 
@@ -536,9 +524,9 @@ A metadata line block start is indicated by a first column containing a string v
 
 A metadata line block always span exactly one line.
 
-## Level 2 - Block structure
+### Level 2 - Block structure
 
-### Table block
+#### Table block
 
 #### Unit mappings
 
@@ -546,7 +534,7 @@ A metadata line block always span exactly one line.
 | ---- | ---- |
 | 1    | 2    |
 
-### Template line block
+#### Template line block
 
 Template data embedded in template files allow input files to be matched against a template, and provide description of input data.
 
@@ -579,27 +567,25 @@ While the lower levels could potentially form a basis for a generic file
 format, the semantics described in this level are mostly specific to the
 use in DEWP.
 
-### Folder input path
+#### Folder input path
 
-### Pondus integration
+#### Pondus integration
 
-### Metadata
+#### Metadata
 
-#### Metadata mapping
+##### Metadata mapping
 
-#### Revision data table
+##### Revision data table
 
-### File names
+#### File names
 
-Appendix A: Low level file format details
-=========================================
+## Appendix A: Low level file format details
 
 ### Excel
 
 ### CSV - Semicolon-separated file
 
-Appendix B – parser implementation example
-==========================================
+## Appendix B – parser implementation example
 
 Level -1 – file (possibly containing more than 1 sheet)
 
