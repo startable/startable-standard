@@ -279,23 +279,22 @@ Table 5 Template block levels
 
 The property is optional. If it appears, it must be one of:
 
-| Property name         | Applies to | Semantics |
-| --------------------- | ---------- | --------- |
-|                       | File       | Table     |
-| description (default) | x          | x         |
-| case                  |            |           |
-| use\_template         |            |           |
-| is\_template          | x          |           |
-| is\_optional          |            | x         |
+| Property name         | Applies to file | Applies to table | Applies to column | Semantics |
+| --------------------- | :--------: | :--------: | :--------: | ---- |
+| `description` (default) | x          | x         | x | Use column 2 as description of this item. Multiple descriptions may be given, in which case a single multi-line description text should be reported. |
+| `case`                  |            |           | x | This component is optional |
+| `use_template`         |            |           | x | For each value *s*, the string [col 3]+*s*+[col 4] is a table name for a table that should match the template in [col 2]. |
+| `is_template`          | x          |           | | This table should only be used for templating |
+| `is_optional`          |            | x         | x | |
 
 Examples:
 
-| Start marker    | Applies to                       | Property |
-| --------------- | -------------------------------- | -------- |
-| :n\_legs        | Column n\_legs in previous table | N/A      |
-| ::farm\_animals | Table farm\_animals              | N/A      |
-|                 |                                  |          |
-|                 |                                  |          |
+| Start marker     | Applies to                        | Property |
+| ---------------- | --------------------------------- | -------- |
+| `:n_legs`        | Column `n_legs` in previous table | N/A      |
+| `::farm_animals` | Table `farm_animals`              | N/A      |
+|                  |                                   |          |
+|                  |                                   |          |
 
 The main purpose of the template system is to aid work on the file level, where destinations cannot be resolved. For this reason, tables are identified by table names only for the purpose of template-matching.
 
