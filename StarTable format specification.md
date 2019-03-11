@@ -1,5 +1,7 @@
 # The StarTable format specification
 
+## Summary
+
 The StarTable format is a container for two-dimensional tables of data,
 in addition to supplementary information elements: metadata, templates,
 and directives. (These elements are, in fact, laid out as tables as
@@ -11,13 +13,13 @@ meta-format. Any file format that can be used to represent a set of
 specifications described in this document), can in principle adhere to
 the StarTable format.
 
-The StarTable format traces its origins to the Optimon project at Ørsted in the early 2010's, 
-\#\#\#\#\#\#
+## History
+
+The StarTable format traces its origins to a software project in the Foundations department of Offshore Wind at [Ørsted](https://orsted.com/) in the mid 2010's. By 2018, its use had spread to five independent projects within the company due to its recognized convenience and flexibility. A common governance structure was established in December 2018 to ensure that continued development of the StarTable format would remain unified while meeting the needs of its diverse user base. In February 2019, approval was granted to open-source not only the StarTable standard itself, but also the suite of software packages and utilities that allow reading/writing/manipulating/displaying StarTable files in various programming languages and technologies. 
+
+
 
 [TOC]
-
-
-
 
 
 ## Atomic types and values
@@ -33,8 +35,8 @@ Cells each contain a value of one of the following atomic types:
 -   DateTime
 
 Empty cells are to be treated as containing an empty string. Empty
-floating-points or integer cell may be represented with either ‘-’,
-‘nan’, ‘NaN’, or ‘NAN’.
+floating-points or integer cell may be represented with either `-`,
+`nan`, `NaN`, or `NAN`.
 
 ### Restrictions on strings
 
@@ -47,16 +49,14 @@ understood as, any string not including these forbidden characters.
 
 ### Additional restrictions on symbol strings
 
-Symbols, such as table descriptors, column names, and destinations (all
+Symbols, such as table names, column names, and destinations (all
 of which are described further in this document), are represented as
-strings. These symbol strings are subject to the following restrictions:
+strings. In addition to general restrictions on strings as described above, these **symbol strings** are subject to the following restrictions:
 
--   They may only contain alphanumeric characters and \_ (underscore),
-    and
+-   They may only contain alphanumeric characters and `_` (underscore); and
 
--   The first character may not be a digit.
+-   The first character may not be a digit. 
 
--   General restrictions on strings, described in Section 2.1
 
 ## Hierarchical structure
 
@@ -134,74 +134,20 @@ Blocks start when their start marker is encountered, and end when their
 end marker is encountered. Blocks always include their start marker
 cell, but exclude their end marker.
 
-<span id="_Ref477857525" class="anchor"></span>Table 2 Summary of block
-types
 
-<table>
-<thead>
-<tr class="header">
-<th>Block type</th>
-<th>Start marker first-column cell content</th>
-<th>End marker</th>
-<th>Description &amp; remarks</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Directive</td>
-<td>String with prefix ***</td>
-<td><ul>
-<li><p>Empty first column cell; or</p></li>
-<li><p>New block start</p></li>
-</ul></td>
-<td><p>Placeholder for a variety of functions e.g.</p>
-<ul>
-<li><p>Version control</p></li>
-<li><p>Allowing tables from various sources to be added dynamically to the set of tables statically present in a sheet</p></li>
-</ul></td>
-</tr>
-<tr class="even">
-<td>Table</td>
-<td><p>A string that:</p>
-<ul>
-<li><p>Has prefix **</p></li>
-<li><p>Is not a valid start marker for a directive block</p></li>
-</ul></td>
-<td><ul>
-<li><p>Empty first column cell; or</p></li>
-<li><p>New block start</p></li>
-</ul></td>
-<td>Vessel for main data content</td>
-</tr>
-<tr class="odd">
-<td>Template</td>
-<td>String with prefix : (one colon, possibly followed by more colons)</td>
-<td><ul>
-<li><p>Empty first column cell; or</p></li>
-<li><p>New block start</p></li>
-</ul></td>
-<td>Template data embedded in template files allow input files to be matched against a template, and provide a description of input data.</td>
-</tr>
-<tr class="even">
-<td>Metadata line</td>
-<td><p>Any string that:</p>
-<ul>
-<li><p>Has suffix :, and</p></li>
-<li><p>Is not a valid start marker for one of the other block types</p></li>
-</ul></td>
-<td>End of line</td>
-<td><p>Provide information about the current sheet.</p>
-<p>Always span exactly one line.</p>
-<p>Are only accepted at the top of a sheet, before any other block types.</p></td>
-</tr>
-</tbody>
-</table>
 
-Table 3 Examples of the various block types
+| Block type    | Start marker first-column cell content                       | End marker                                        | Description & remarks                                        |
+| ------------- | ------------------------------------------------------------ | ------------------------------------------------- | ------------------------------------------------------------ |
+| Directive     | String with prefix `***`                                     | -   Empty first column cell; or   New block start | Placeholder for a variety of functions e.g.    - Version control  - Allowing tables from various sources to be added dynamically to the set of tables statically present in a sheet |
+| Table         | A string that:  Has prefix `**`                                                 Is not a valid start marker for a directive block | -   Empty first column cell; or New block start   | Vessel for main data content                                 |
+| Template      | String with prefix : (one colon, possibly followed by more colons) | -   Empty first column cell; or New block start   | Template data embedded in template files allow input files to be matched against a template, and provide a description of input data. |
+| Metadata line | Any string that: <br> Has suffix :, and <br> - Is not a valid start marker for one of the other block types | End of line                                       | Provide information about the current sheet. <br> Always span exactly one line. <br> Are only accepted at the top of a sheet, before any other block types. |
+
+Examples of the various block types:
 
 ![](media/block-examples.png)
 
-Sections 4.1 to 4.4 describe the structure of the various block types.
+The following sections describe the structure of the various block types.
 
 ### Directive block
 
@@ -217,8 +163,7 @@ Typical use cases revision history, include, …
 
 A table block consists of:
 
--   The start marker prefix, \*\*, followed by a *table* *descriptor*
-    (equivalent to a name or title);
+-   The start marker prefix, `**`, followed by a *table name*;
 
 -   *Destination list*, indicating what content this table applies to;
     and
@@ -254,18 +199,17 @@ Figure 2 Elements of a table block
 
 ![Annotated example of a table block](media/table-block-example.png)
 
-Figure 3 Annotated
-example of a table block
+Figure 3 Annotated example of a table block
 
-#### Descriptor
+#### Table name
 
-Along with its prefix \*\*, the descriptor marks the first row of the
+Along with its prefix `**`, the table name marks the first row of the
 table block. It is in the first column.
 
-The descriptor is intended to describe what the table is about. It can
+The table name is intended to describe what the table is about. It can
 be any single-line string subject to restrictions on symbol strings, and
 not starting with \* (so as not to be confused, in conjunction with its
-prefix \*\*, with a directive block start marker).
+prefix `**`, with a directive block start marker).
 
 #### Destination list
 
@@ -297,32 +241,15 @@ Valid indicators and their interpretation are described in Table 3.
 <span id="_Ref478059181" class="anchor"></span>Table 4 Valid data type /
 unit indicators
 
-<table>
-<thead>
-<tr class="header">
-<th>Indicator</th>
-<th>Data type of column values</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>text</td>
-<td>Text</td>
-</tr>
-<tr class="even">
-<td>datetime</td>
-<td>Datetime value, with format conforming to <a href="https://xkcd.com/1179/">ISO 8601</a>.</td>
-</tr>
-<tr class="odd">
-<td>-</td>
-<td>Unitless / non-dimensional numerical values</td>
-</tr>
-<tr class="even">
-<td>Any other string</td>
-<td>Numerical values with unit specified by the indicator string.</td>
-</tr>
-</tbody>
-</table>
+
+
+| Indicator        | Data type of column values                                   |
+| ---------------- | ------------------------------------------------------------ |
+| text             | Text                                                         |
+| datetime         | Datetime value, with format conforming to [ISO 8601](https://xkcd.com/1179/). |
+| -                | Unitless / non-dimensional numerical values                  |
+| Any other string | Numerical values with unit specified by the indicator string. |
+
 
 ##### Values
 
@@ -336,146 +263,43 @@ against a template, and provide description of input data.
 
 Start marker cell has the regex form
 
-^(?&lt;level&gt;:{1:3})(?&lt;identifier&gt;(\\w\*))(\\.(?&lt;property&gt;\\w+))?\\s\*$
+```
+^(?level:{1:3})(?identifier(\w*))(\.(?property\w+))?\s*$
+```
 
 The number of colons in the prefix determine the level to which this
 template block applies. The characteristics of the three template block
 levels are summarized in Table 3.
 
-<span id="_Ref478051456" class="anchor"></span>Table 5 Template block
-levels
+Table 5 Template block levels
 
-<table>
-<thead>
-<tr class="header">
-<th>Start marker prefix</th>
-<th>Level</th>
-<th>Identifier must be a…</th>
-<th>Default identifier (if omitted)</th>
-<th>Default property (if omitted)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><p>:::</p>
-<p>(3 colons)</p></td>
-<td>Sheet</td>
-<td>File name</td>
-<td>Current file name</td>
-<td>description</td>
-</tr>
-<tr class="even">
-<td><p>::</p>
-<p>(2 colons)</p></td>
-<td>Table</td>
-<td>Table name</td>
-<td>Latest table block</td>
-<td>description</td>
-</tr>
-<tr class="odd">
-<td><p>:</p>
-<p>(1 colon)</p></td>
-<td>Column</td>
-<td>Column name</td>
-<td>Most recent column name in a column level block. It is an error to not specify column identifier if no valid column level template block has appeared after the most recent table block.</td>
-<td>description</td>
-</tr>
-</tbody>
-</table>
+| Start marker prefix | Level  | Identifier must be a… | Default identifier (if omitted)                                                                                                                                                          | Default property (if omitted) |
+|---------------------|--------|-----------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------|
+| `:::` (3 colons) | Sheet  | File name             | Current file name   | description                   |
+| `::` (2 colons)  | Table  | Table name            | Latest table block | description                   |
+| `:` (1 colon)    | Column | Column name           | Most recent column name in a column level block. It is an error to not specify column identifier if no valid column level template block has appeared after the most recent table block. | description                   |
 
 The property is optional. If it appears, it must be one of:
 
-<table>
-<thead>
-<tr class="header">
-<th>Property name</th>
-<th>Applies to</th>
-<th>Semantics</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td>File</td>
-<td>Table</td>
-<td>Column</td>
-<td></td>
-</tr>
-<tr class="even">
-<td>description (default)</td>
-<td>x</td>
-<td>x</td>
-<td>x</td>
-<td>Use column 2 as description of this item. Multiple descriptions may be given, in which case a single multi-line description text should be reported.</td>
-</tr>
-<tr class="odd">
-<td>case</td>
-<td></td>
-<td></td>
-<td>x</td>
-<td>This component is optional</td>
-</tr>
-<tr class="even">
-<td>use_template</td>
-<td></td>
-<td></td>
-<td>x</td>
-<td>For each value s, the string [col 3]+s+[col 4] is a table descriptor for a table that should match the template in [col 2].</td>
-</tr>
-<tr class="odd">
-<td>is_template</td>
-<td>x</td>
-<td></td>
-<td></td>
-<td>This table should only be used for templating</td>
-</tr>
-<tr class="even">
-<td>is_optional</td>
-<td></td>
-<td>x</td>
-<td>x</td>
-<td></td>
-</tr>
-</tbody>
-</table>
+| Property name         | Applies to | Semantics |
+| --------------------- | ---------- | --------- |
+|                       | File       | Table     |
+| description (default) | x          | x         |
+| case                  |            |           |
+| use\_template         |            |           |
+| is\_template          | x          |           |
+| is\_optional          |            | x         |
 
 Examples:
 
-<table>
-<thead>
-<tr class="header">
-<th>Start marker</th>
-<th>Applies to</th>
-<th>Property</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>:n_legs</td>
-<td>Column n_legs in previous table</td>
-<td>N/A</td>
-</tr>
-<tr class="even">
-<td>::farm_animals</td>
-<td>Table farm_animals</td>
-<td>N/A</td>
-</tr>
-<tr class="odd">
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
+| Start marker    | Applies to                       | Property |
+| --------------- | -------------------------------- | -------- |
+| :n\_legs        | Column n\_legs in previous table | N/A      |
+| ::farm\_animals | Table farm\_animals              | N/A      |
+|                 |                                  |          |
+|                 |                                  |          |
 
-The main purpose of the template system is to aid work on the file
-level, where destinations cannot be resolved. For this reason, tables
-are identified by descriptors only for the purpose of template-matching.
+The main purpose of the template system is to aid work on the file level, where destinations cannot be resolved. For this reason, tables are identified by table names only for the purpose of template-matching.
 
 ### Metadata line block
 
