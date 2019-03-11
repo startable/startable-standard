@@ -241,12 +241,12 @@ unit indicators
 
 
 
-| Indicator        | Data type of column values                                   |
-| ---------------- | ------------------------------------------------------------ |
-| text             | Text                                                         |
-| datetime         | Datetime value, with format conforming to [ISO 8601](https://xkcd.com/1179/). |
-| -                | Unitless / non-dimensional numerical values                  |
-| Any other string | Numerical values with unit specified by the indicator string. |
+| Indicator                  | Data type of column values                                   |
+| -------------------------- | ------------------------------------------------------------ |
+| `text`                     | Text                                                         |
+| `datetime`                 | Datetime value, with format conforming to [ISO 8601](https://xkcd.com/1179/). |
+| `-` <br>(a single "minus") | Unitless / non-dimensional numerical values                  |
+| Any other string           | Numerical values with unit specified by the indicator string. |
 
 
 ##### Values
@@ -273,9 +273,9 @@ Table 5 Template block levels
 
 | Start marker prefix | Level  | Identifier must be a… | Default identifier (if omitted)                                                                                                                                                          | Default property (if omitted) |
 |---------------------|--------|-----------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------|
-| `:::` (3 colons) | Sheet  | File name             | Current file name   | description                   |
-| `::` (2 colons)  | Table  | Table name            | Latest table block | description                   |
-| `:` (1 colon)    | Column | Column name           | Most recent column name in a column level block. It is an error to not specify column identifier if no valid column level template block has appeared after the most recent table block. | description                   |
+| `:::` <br>(3 colons) | Sheet  | File name             | Current file name   | description                   |
+| `::` <br>(2 colons) | Table  | Table name            | Latest table block | description                   |
+| `:` <br>(1 colon) | Column | Column name           | Most recent column name in a column level block. It is an error to not specify column identifier if no valid column level template block has appeared after the most recent table block. | description                   |
 
 The property is optional. If it appears, it must be one of:
 
