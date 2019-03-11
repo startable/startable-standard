@@ -43,7 +43,7 @@ floating-points or integer cell may be represented with either `-`,
 Strings may not contain characters used to represent the end of a line
 (such as end of line and line feed) as this would introduce ambiguity
 between cell content and the end of a row. Note that this remark applies
-throughout this document; there are a few instances where we indicate
+throughout this document: there are a few instances where we indicate
 that a given field can consist of “any string”; this should be
 understood as, any string not including these forbidden characters.
 
@@ -51,7 +51,7 @@ understood as, any string not including these forbidden characters.
 
 Symbols, such as table names, column names, and destinations (all
 of which are described further in this document), are represented as
-strings. In addition to general restrictions on strings as described above, these **symbol strings** are subject to the following restrictions:
+strings. In addition to general restrictions on strings as described above, these *symbol strings* are subject to the following restrictions:
 
 -   They may only contain alphanumeric characters and `_` (underscore); and
 
@@ -65,7 +65,7 @@ illustrated in Table 1.
 
 The highest-level structure of the StarTable format proper is the
 *sheet*. A sheet contains a series of *blocks* of different types,
-further described in Section 6. Blocks of table type are the main data
+further described in Section 6. Blocks of type table are the main data
 container, while other block types provide supplementary information and
 functionality.
 
@@ -73,8 +73,7 @@ Blocks consist of two-dimensional arrays of cells each containing an
 *atomic value*. The detailed content of blocks depends on the block
 type.
 
-Sheets are contained in a file. Some file formats (such as CSV) are best
-suited to containing only one sheet, while others (e.g. Excel workbook)
+Sheets are contained in a file. Some file formats (such as CSV) can contain only one sheet, while others (e.g. Excel workbook)
 can contain multiple sheets. Since the StarTable format is file-format
 agnostic, files are not part of the StarTable format proper, and a
 detailed discussion of file formats is beyond the scope of this
@@ -134,14 +133,14 @@ Blocks start when their start marker is encountered, and end when their
 end marker is encountered. Blocks always include their start marker
 cell, but exclude their end marker.
 
+**Summary of block types:**
 
-
-| Block type    | Start marker first-column cell content                       | End marker                                        | Description & remarks                                        |
-| ------------- | ------------------------------------------------------------ | ------------------------------------------------- | ------------------------------------------------------------ |
-| Directive     | String with prefix `***`                                     | -   Empty first column cell; or   New block start | Placeholder for a variety of functions e.g.    - Version control  - Allowing tables from various sources to be added dynamically to the set of tables statically present in a sheet |
-| Table         | A string that:  Has prefix `**`                                                 Is not a valid start marker for a directive block | -   Empty first column cell; or New block start   | Vessel for main data content                                 |
-| Template      | String with prefix : (one colon, possibly followed by more colons) | -   Empty first column cell; or New block start   | Template data embedded in template files allow input files to be matched against a template, and provide a description of input data. |
-| Metadata line | Any string that: <br> Has suffix :, and <br> - Is not a valid start marker for one of the other block types | End of line                                       | Provide information about the current sheet. <br> Always span exactly one line. <br> Are only accepted at the top of a sheet, before any other block types. |
+| Block type    | Start marker first-column cell content                       | End marker                                             | Description & remarks                                        |
+| ------------- | ------------------------------------------------------------ | ------------------------------------------------------ | ------------------------------------------------------------ |
+| Directive     | String with prefix `***`                                     | - Empty first column cell; or<br>- New block start     | Placeholder for a variety of functions e.g.  <br> - Version control <br> - Allowing tables from various sources to be added dynamically to the set of tables statically present in a sheet |
+| Table         | A string that:  Has prefix `**`                                                 Is not a valid start marker for a directive block | - Empty first column cell; or <br> - New block start   | Vessel for main data content                                 |
+| Template      | String with prefix `:` (one colon, possibly followed by more colons) | -   Empty first column cell; or <br> - New block start | Template data embedded in template files allow input files to be matched against a template, and provide a description of input data. |
+| Metadata line | Any string that: <br> - Has suffix `:`, and <br> - Is not a valid start marker for one of the other block types | End of line                                            | Provide information about the current sheet. <br> Always span exactly one line. <br> Are only accepted at the top of a sheet, before any other block types. |
 
 Examples of the various block types:
 
@@ -229,8 +228,7 @@ given table column are arranged vertically, counting from the top down.
 The first cell of a table column is the header symbol, which is intended
 to describe the contents of the column. It can be any string.
 
-The header must be unique within the current table i.e. no two columns
-of a given table may have the same header.
+The header must be unique within the current table i.e. no two columns of a given table may have the same header.
 
 ##### Data type / unit indicator
 
