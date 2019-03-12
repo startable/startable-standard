@@ -15,12 +15,55 @@ the StarTable format.
 
 ## History
 
-The StarTable format traces its origins to a software project in the Foundations department of Offshore Wind at [Ørsted](https://orsted.com/) in the mid 2010's. By 2018, its use had spread to five independent projects within the company due to its recognized convenience and flexibility. A common governance structure was established in December 2018 to ensure that continued development of the StarTable format would remain unified while meeting the needs of its diverse user base. In February 2019, approval was granted to open-source not only the StarTable standard itself, but also the suite of software packages and utilities that allow reading/writing/manipulating/displaying StarTable files in various programming languages and technologies. 
+The StarTable format traces its origins to a software project in the Foundations department of Offshore Wind at [Ørsted](https://orsted.com/) in the mid 2010's. 
+
+By 2018, the format's use had spread to five independent projects within the company due to its recognized convenience and flexibility. A common governance structure was established in December 2018 to ensure that continued development of the StarTable format would remain unified while meeting the needs of its diverse user base. 
+
+In February 2019, approval was granted to open source not only the StarTable standard itself, but also the suite of software packages and utilities that allow reading/writing/manipulating/displaying StarTable files in various programming languages and technologies. 
 
 
 
 [TOC]
 
+## Quick introduction to the StarTable format
+
+Here is an example StarTable file as viewed in Microsoft Excel. The various block types that it contains are annotated on the right. 
+
+![](media/block-examples.png)
+
+### Intro to table blocks
+
+*Table blocks* are (typically) where you would put most of your data. In some bare-bone cases, this may be the only type of block you'll really want or need in a StarTable file. Which is why we'll spend a few lines discussing them here. 
+
+The example file above contains only one table block, but StarTable files can contain any number of table blocks – and of any other block type, for that matter. 
+
+The first cell of a table block contains the *table name*, in this case, `farm_animals`, preceded by a `**` prefix, which indicates the start of the table block. 
+
+The cell below that is the *destination*; we won't dig into what this is right now, but long story short, it's a fairly free-form field can be used in an application-specific way, typically to establish relationships between various table blocks. 
+
+Below that are a number of columns. Each column starts with its *column name* in its top cell, followed by the *column unit* in the cell below that. Then follows an arbitrary number of rows containing data. All columns in the table block must have the same number of rows. 
+
+### Super quick intro to all the other block types
+
+*Metadata lines* indicate something about the StarTable file itself. In the example above, the file's author is indicated in a metadata line. Their first cell always ends with a `:`.
+
+*Directive blocks* start with `***` followed by the *directive name*. They are fairly free-form their design and usage is application-specific. 
+
+*Template blocks* tell us something about the contents of the file; either about the file as a whole, the table immediately preceding the template block, or a column in that table. Template blocks start with one or more `:` depending on their level (three for file, two for table, one for column). 
+
+*Comments* are free-text remarks, analogous to comments in source code. You can write comments pretty much anywhere (between blocks and to the right of blocks), as long as they don't cause ambiguity with other blocks and block types. 
+
+### High-level structure of a StarTable file
+
+Below is an illustration of the hierarchical structure of a StarTable file. 
+
+![High-level hierarchical structure of the StarTable format](media/hierarchical-structure-diagram.png)
+
+The StarTable format is file-format-agnostic. A StarTable file can be saved as a CSV file, or as an Excel workbook, or as any other file format that can represent columns and rows. Some of these file formats, such as Excel workbooks, can support multiple sheets. Others, such as CSV files, can't; they can contain only one sheet. 
+
+Therefore, a more complete characterization of the example StarTable file shown further above is that it contains only one *sheet*, which in turn only contains one table block (along with a few other blocks of other types). 
+
+This concludes the quick intro to StarTable. What follows is a more formal, detailed, and rigorous description of the StarTable format. 
 
 ## Atomic types and values
 
@@ -144,6 +187,12 @@ cell, but exclude their end marker.
 
 Examples of the various block types:
 
+
+
+
+
+
+
 ![](media/block-examples.png)
 
 The following sections describe the structure of the various block types.
@@ -180,9 +229,9 @@ A table block consists of:
         table must have the same number of values)
 
 These elements are illustrated in Figure 1 and described further below.
-An annotated example is shown in Figure 2.
 
 
+Generic example of a table block:
 
 | **<descriptor> |                |                |      |
 | -------------- | -------------- | -------------- | ---- |
@@ -194,11 +243,9 @@ An annotated example is shown in Figure 2.
 | <col 1 val 3>  | <col 2 val 3>  | <col 3 val 3>  | …    |
 | …              | …              | …              | …    |
 
-Figure 2 Elements of a table block
+Here is an annotated example of a table block:
 
 ![Annotated example of a table block](media/table-block-example.png)
-
-Figure 3 Annotated example of a table block
 
 #### Table name
 
@@ -207,7 +254,7 @@ table block. It is in the first column.
 
 The table name is intended to describe what the table is about. It can
 be any single-line string subject to restrictions on symbol strings, and
-not starting with \* (so as not to be confused, in conjunction with its
+not starting with `*` (so as not to be confused, in conjunction with its
 prefix `**`, with a directive block start marker).
 
 #### Destination list
@@ -234,12 +281,7 @@ The header must be unique within the current table i.e. no two columns of a give
 
 The second cell of a table column is the data type / unit indicator
 symbol, which specifies how the column’s values should be interpreted.
-Valid indicators and their interpretation are described in Table 3.
-
-<span id="_Ref478059181" class="anchor"></span>Table 4 Valid data type /
-unit indicators
-
-
+Valid indicators and their interpretation are described in the table below.
 
 | Indicator                  | Data type of column values                                   |
 | -------------------------- | ------------------------------------------------------------ |
@@ -273,9 +315,9 @@ Table 5 Template block levels
 
 | Start marker prefix | Level  | Identifier must be a… | Default identifier (if omitted)                                                                                                                                                          | Default property (if omitted) |
 |---------------------|--------|-----------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------|
-| `:::` <br>(3 colons) | Sheet  | File name             | Current file name   | description                   |
-| `::` <br>(2 colons) | Table  | Table name            | Latest table block | description                   |
-| `:` <br>(1 colon) | Column | Column name           | Most recent column name in a column level block. It is an error to not specify column identifier if no valid column level template block has appeared after the most recent table block. | description                   |
+| `:::` <br>(three colons) | Sheet  | File name             | Current file name   | description                   |
+| `::` <br>(two colons) | Table  | Table name            | Latest table block | description                   |
+| `:` <br>(a single colon) | Column | Column name           | Most recent column name in a column level block. <br />It is an error not to specify a column identifier if no valid column level template block has appeared after the most recent table block. | description                   |
 
 The property is optional. If it appears, it must be one of:
 
