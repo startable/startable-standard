@@ -35,13 +35,15 @@ Here is an example StarTable file as viewed in Microsoft Excel. The various bloc
 
 *Table blocks* are (typically) where you would put most of your data. In some bare-bone cases, this may be the only type of block you'll really want or need in a StarTable file. Which is why we'll spend a few lines discussing them here. 
 
-The example file above contains only one table block, but StarTable files can contain any number of table blocks – and of any other block type, for that matter. 
+The example file above contains only one table block, but StarTable files can contain any number of table blocks – and of any other block type, for that matter. Nevertheless, let's take a closer look at the example table block:
+
+![Example table block](media/table-block-example.png)
 
 The first cell of a table block contains the *table name*, in this case, `farm_animals`, preceded by a `**` prefix, which indicates the start of the table block. 
 
-The cell below that is the *destination*; we won't dig into what this is right now, but long story short, it's a fairly free-form field can be used in an application-specific way, typically to establish relationships between various table blocks. 
+The cell below that is the *destination*; we won't dig into what this is right now, but long story short, it's a fairly free-form field can be used in an application-specific way, typically to establish relationships between various table blocks. The default destination is `all`, meaning no specific relationship is established, i.e. this table applies to the entire context. 
 
-Below that are a number of columns. Each column starts with its *column name* in its top cell, followed by the *column unit* in the cell below that. Then follows an arbitrary number of rows containing data. All columns in the table block must have the same number of rows. 
+Below the destination are a number of columns. Each column starts with its *column name* in its top cell, followed by the *column unit* in the cell below that. Then follows an arbitrary number of rows containing values. All columns in the table block must have the same number of rows. 
 
 ### Super quick intro to all the other block types
 
@@ -63,7 +65,7 @@ The StarTable format is file-format-agnostic. A StarTable file can be saved as a
 
 Therefore, a more complete characterization of the example StarTable file shown further above is that it contains only one *sheet*, which in turn only contains one table block (along with a few other blocks of other types). 
 
-This concludes the quick intro to StarTable. What follows is a more formal, detailed, and rigorous description of the StarTable format. 
+This concludes this quick intro to StarTable. What follows is a more formal, detailed, and rigorous description of the StarTable format. 
 
 ## Atomic types and values
 
