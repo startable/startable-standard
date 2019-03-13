@@ -198,15 +198,17 @@ These elements are illustrated in Figure 1 and described further below.
 
 Generic example of a table block:
 
-| **<table name>     |                  |                  |       |
+| `table name`   |                  |                  |       |
 | ------------------ | ---------------- | ---------------- | ----- |
-| **<destinations>** |                  |                  |       |
-| **<col 1 name>**   | **<col 2 name>** | **<col 3 name>** | **…** |
-| **<col 1 unit>**   | **<col 2 unit>** | **<col 3 unit>** | **…** |
-| <col 1 val 1>      | <col 2 val 1>    | <col 3 val 1>    | …     |
-| <col 1 val 2>      | <col 2 val 2>    | <col 3 val 2>    | …     |
-| <col 1 val 3>      | <col 2 val 3>    | <col 3 val 3>    | …     |
+| **`destinations`** |                  |                  |       |
+| **`col 1 name`**   | **`col 2 name`** | **`col 3 name`** | **…** |
+| **`col 1 unit`**   | **`col 2 unit`** | **`col 3 unit`** | **…** |
+| `col 1 val 1`      | `col 2 val 1`    | `col 3 val 1`    | …     |
+| `col 1 val 2`      | `col 2 val 2`    | `col 3 val 2`    | …     |
+| `col 1 val 3`      | `col 2 val 3`    | `col 3 val 3`    | …     |
 | …                  | …                | …                | …     |
+
+
 
 #### Table name
 
