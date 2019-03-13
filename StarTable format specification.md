@@ -6,9 +6,9 @@ StarTable is a human- and machine-readable format designed to conveniently
 store two-dimensional tables of data. It also supports peripheral information elements such as metadata. 
 
 The StarTable format is file-format agnostic. Any file format that can be used to represent a set of
-“tables” each with columns and rows of cells, can in principle adhere to the StarTable format.
+“tables” each with columns and rows of cells, can in principle adhere to the StarTable format, though in practice, CSV and Excel workbooks are most commonly used.
 
-## History
+### History
 
 The StarTable format traces its origins to a software project in the Foundations department of Offshore Wind at [Ørsted](https://orsted.com/) in the mid 2010's. 
 
@@ -16,11 +16,7 @@ By 2018, the format's use had spread to five independent projects within the com
 
 In February 2019, approval was granted to open source not only the StarTable standard itself, but also the suite of software packages and utilities that allow reading/writing/manipulating/displaying StarTable files in various programming languages and technologies. Governance remains Ørsted-based for the time being, though this is liable to change if, as hoped for, a community of users emerges outside Ørsted. 
 
-
-
-[TOC]
-
-## Quick introduction to the StarTable format
+## Quick overview of the StarTable format
 
 Before diving into the formal, detailed specification of the StarTable format, let's have a high-level, example-based look at it. 
 
@@ -68,7 +64,7 @@ This concludes this quick intro to StarTable. What follows is a more formal, det
 
 ### File format
 
-To be StarTable-ready, a file format must be able to represent a
+The StarTable format is file-format agnostic. To be StarTable-ready, a given file format must be able to represent a
 two-dimensional array of cells, with the array being of arbitrary length
 and width, and with each cell containing a value of one of the atomic
 types described further below (basically: strings, numbers, datetimes, and valid empty-cell markers). 
@@ -83,31 +79,10 @@ a file format that can contain multiple sheets would be a compressed
 archive of multiple CSV files.
 
 In file formats where files can contain multiple sheets, each sheet must
-be named such as to be uniquely identifiable.
-
-For details related to specific file formats, see Appendix A.
-
-
-
-The StarTable format is file-format agnostic, in the sense that it can incorporate
-any file format that allows a representation as a one or more sheets each holding 
-an array of cells, where each cell contains an object of one of the atomic input types.
-
-If a format supports multiple sheets, these must be named and the level 0 processing 
+be named such as to be uniquely identifiable, and the level 0 processing 
 should only include sheets with names matching the ''INPUT_SHEET_NAME_RE'' regexp.
 
-Atomic input types:
-
-- String
-- Double
-- Int
-- DateTime
-
-An empty cell should be treated as an empty string
-
-For details related to specific file formats, see Appendix A.
-
-## Atomic types and values
+### Atomic types and values
 
 Cells each contain a value of one of the following atomic types:
 
@@ -119,11 +94,12 @@ Cells each contain a value of one of the following atomic types:
 
 -   DateTime
 
-Empty cells are to be treated as containing an empty string. Empty
-floating-points or integer cell may be represented with either `-`,
-`nan`, `NaN`, or `NAN`.
+Empty cells are to be treated as containing an empty string. 
 
-### Restrictions on strings
+Floating-point and integer cells may not be left empty. Null or missing values may 
+be represented by either of the following valid null markers: `-`, `nan`, `NaN`, or `NAN`.
+
+#### Restrictions on strings
 
 Strings may not contain characters used to represent the end of a line
 (such as end of line and line feed) as this would introduce ambiguity
@@ -132,10 +108,9 @@ throughout this document: there are a few instances where we indicate
 that a given field can consist of “any string”; this should be
 understood as, any string not including these forbidden characters.
 
-### Additional restrictions on symbol strings
+#### Additional restrictions on symbol strings
 
-Symbols, such as table names, column names, and destinations (all
-of which are described further in this document), are represented as
+*Symbols*, such as table names, column names, and destinations, are represented as
 strings. In addition to general restrictions on strings as described above, these *symbol strings* are subject to the following restrictions:
 
 -   They may only contain alphanumeric characters and `_` (underscore); and
@@ -145,83 +120,57 @@ strings. In addition to general restrictions on strings as described above, thes
 
 ## Hierarchical structure
 
-The high-level hierarchical structure of the StarTable format is
-illustrated in Table 1.
-
 The highest-level structure of the StarTable format proper is the
-*sheet*. A sheet contains a series of *blocks* of different types,
-further described in Section 6. Blocks of type table are the main data
+*sheet*. A sheet contains a series of *blocks* of different types. Blocks of type table are the main data
 container, while other block types provide supplementary information and
-functionality.
+functionality. 
 
 Blocks consist of two-dimensional arrays of cells each containing an
 *atomic value*. The detailed content of blocks depends on the block
 type.
 
-Sheets are contained in a file. Some file formats (such as CSV) can contain only one sheet, while others (e.g. Excel workbook)
-can contain multiple sheets. Since the StarTable format is file-format
+Sheets are contained in a file. Some file formats (such as CSV) can contain only one sheet, while others (e.g. Excel workbook) can contain multiple sheets. Since the StarTable format is file-format
 agnostic, files are not part of the StarTable format proper, and a
 detailed discussion of file formats is beyond the scope of this
-document. A summary discussion is provided further below.
-
-
+document. 
 
 ## Sheets
 
 A StarTable sheet consists of an arbitrary number of rows, each
 containing an arbitrary number of cells.
 
-## Blocks
+## Level 1 - Logical file structure: Series of blocks
 
-The rows of a StarTable sheet are arranged as a series of “blocks”. Any
-given row can only be a member of one block. Rows that are not in a
-block are treated as “comments”.
+The rows of a StarTable sheet are arranged as a series of “blocks”. Thus Level 1 processing maps a list of sheets to a single list of blocks of the types detailed below.
 
-The primary content is placed in “table” blocks, but there are
-additional block types that provide supplementary information and
-functionality. Table 1 summarizes the different block types.
+Any given row on a sheet can only be a member of one block, but all rows need not be in a block. 
+(Rows that are not in a block are treated as “comments”.)
 
-Block syntax is designed such that only the first column need be
-considered in order to unambiguously allocate rows into blocks. Block
+The block syntax is designed such that only the first column need be
+considered in order to unambiguously split a sheet i.e. allocate its rows into blocks. Block
 start markers are defined by the contents of cells in this first column.
 The same is true of end markers – except in the case of metadata lines,
 which are single-row blocks and require no end marker other than their
-end of line.
+end of line. 
 
 Blocks start when their start marker is encountered, and end when their
 end marker is encountered. Blocks always include their start marker
 cell, but exclude their end marker.
 
-**Summary of block types:**
+The primary content is placed in “table” blocks, but there are
+additional block types that provide supplementary information and
+functionality. The different block types are summarized in this table:
 
 | Block type    | Start marker first-column cell content                       | End marker                                             | Description & remarks                                        |
 | ------------- | ------------------------------------------------------------ | ------------------------------------------------------ | ------------------------------------------------------------ |
-| Directive     | String with prefix `***`                                     | - Empty first column cell; or<br>- New block start     | Placeholder for a variety of functions e.g.  <br> - Version control <br> - Allowing tables from various sources to be added dynamically to the set of tables statically present in a sheet |
-| Table         | A string that:  Has prefix `**`                                                 Is not a valid start marker for a directive block | - Empty first column cell; or <br> - New block start   | Vessel for main data content                                 |
-| Template      | String with prefix `:` (one colon, possibly followed by more colons) | -   Empty first column cell; or <br> - New block start | Template data embedded in template files allow input files to be matched against a template, and provide a description of input data. |
-| Metadata line | Any string that: <br> - Has suffix `:`, and <br> - Is not a valid start marker for one of the other block types | End of line                                            | Provide information about the current sheet. <br> Always span exactly one line. <br> Are only accepted at the top of a sheet, before any other block types. |
+| Directive     | String starting with `***`                                   | - Empty first column cell; or<br>- New block start     | Placeholder for a variety of functions e.g.  <br> - Version control <br> - Allowing tables from various sources to be added dynamically to the set of tables statically present in a sheet |
+| Table         | String starting with `**`                                                 (but not `***`) | - Empty first column cell; or <br> - New block start   | Primary data content                                         |
+| Template      | String starting with `:` (one colon, possibly followed by more colons) | -   Empty first column cell; or <br> - New block start | Template data embedded in template files allow input files to be matched against a template, and provide a description of input data. |
+| Metadata line | Any string that: <br />- Ends with `:`, and <br />- Is not a valid start marker for one of the other block types | End of line                                            | Are only accepted at the top of a sheet, before any other block types.<br />Provide information about the current sheet.<br />Always span exactly one line. |
 
-Examples of the various block types:
+The following sections describe the structure of these block types.
 
-
-
-
-
-
-
-![](media/block-examples.png)
-
-The following sections describe the structure of the various block types.
-
-### Directive block
-
-\#\#\#\#
-
-Tables without destinations or units
-
-Application-specific
-
-Typical use cases revision history, include, …
+## Level 2 - Block structure
 
 ### Table block
 
@@ -235,33 +184,29 @@ A table block consists of:
 -   An arbitrary number of vertical *table columns*, arranged
     side-by-side horizontally. Each column consists of:
 
-    -   A *header*, describing the contents of the column;
+    -   A *column name*, describing the contents of the column;
 
-    -   A *data type / unit indicator*, used to distinguished between
+    -   A data type / unit indicator, hereafter simply referred to in shorthand as *unit*, used to distinguished between
         text content, unitless numerical content, and numerical content
         with units; and
 
-    -   An arbitrary number of values (though all columns within a given
-        table must have the same number of values)
+    -   An arbitrary number of values. All columns within a given
+        table must have the same number of rows i.e. values. 
 
 These elements are illustrated in Figure 1 and described further below.
 
 
 Generic example of a table block:
 
-| **<descriptor> |                |                |      |
-| -------------- | -------------- | -------------- | ---- |
-| <destinations> |                |                |      |
-| <col 1 header> | <col 2 header> | <col 3 header> | …    |
-| <col 1 unit>   | <col 2 unit>   | <col 3 unit>   | …    |
-| <col 1 val 1>  | <col 2 val 1>  | <col 3 val 1>  | …    |
-| <col 1 val 2>  | <col 2 val 2>  | <col 3 val 2>  | …    |
-| <col 1 val 3>  | <col 2 val 3>  | <col 3 val 3>  | …    |
-| …              | …              | …              | …    |
-
-Here is an annotated example of a table block:
-
-![Annotated example of a table block](media/table-block-example.png)
+| **<table name>     |                  |                  |       |
+| ------------------ | ---------------- | ---------------- | ----- |
+| **<destinations>** |                  |                  |       |
+| **<col 1 name>**   | **<col 2 name>** | **<col 3 name>** | **…** |
+| **<col 1 unit>**   | **<col 2 unit>** | **<col 3 unit>** | **…** |
+| <col 1 val 1>      | <col 2 val 1>    | <col 3 val 1>    | …     |
+| <col 1 val 2>      | <col 2 val 2>    | <col 3 val 2>    | …     |
+| <col 1 val 3>      | <col 2 val 3>    | <col 3 val 3>    | …     |
+| …                  | …                | …                | …     |
 
 #### Table name
 
@@ -278,28 +223,27 @@ prefix `**`, with a directive block start marker).
 The destination list is in the first-column cell on the second row of
 the table block. It is a space-delimited list of destination symbols.
 
-What’s a destination? Oh, boy. Here we go.
+??????????
 
 #### Table columns
 
 Table columns start on the third row of the table block and occupy the
-remaining rows of the table block all the way to its end. The cells of a
-given table column are arranged vertically, counting from the top down.
+remaining rows of the table block all the way down to its end. 
 
-##### Header
+##### Column name
 
-The first cell of a table column is the header symbol, which is intended
+The first cell of a table column is the *column name* symbol, which is intended
 to describe the contents of the column. It can be any string.
 
-The header must be unique within the current table i.e. no two columns of a given table may have the same header.
+The column name must be unique within the current table i.e. no two columns of a given table may have the same name.
 
-##### Data type / unit indicator
+##### Unit
 
-The second cell of a table column is the data type / unit indicator
+The second cell of a table column is the *unit*, a data type / unit indicator
 symbol, which specifies how the column’s values should be interpreted.
 Valid indicators and their interpretation are described in the table below.
 
-| Indicator                  | Data type of column values                                   |
+| Unit                       | Data type of column values                                   |
 | -------------------------- | ------------------------------------------------------------ |
 | `text`                     | Text                                                         |
 | `datetime`                 | Datetime value, with format conforming to [ISO 8601](https://xkcd.com/1179/). |
@@ -310,7 +254,7 @@ Valid indicators and their interpretation are described in the table below.
 ##### Values
 
 The remaining cells of a table column contain data values, which can be
-of any of the atomic types described in Section 2.
+of any of the atomic types listed above.
 
 ### Template block
 
@@ -325,9 +269,7 @@ Start marker cell has the regex form
 
 The number of colons in the prefix determine the level to which this
 template block applies. The characteristics of the three template block
-levels are summarized in Table 3.
-
-Table 5 Template block levels
+levels are summarized in this table:
 
 | Start marker prefix | Level  | Identifier must be a… | Default identifier (if omitted)                                                                                                                                                          | Default property (if omitted) |
 |---------------------|--------|-----------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------|
@@ -360,61 +302,19 @@ The main purpose of the template system is to aid work on the file level, where 
 
 \#\#\#
 
-## Document structure: the layer model
+### Directive block
 
-### Level 0 - Low level file structure
+\#\#\#\#
 
-The StarTable format is file-format agnostic, in the sense that it can incorporate
-any file format that allows a representation as a one or more sheets each holding 
-an array of cells, where each cell contains an object of one of the atomic input types.
+Tables without destinations or units
 
-If a format supports multiple sheets, these must be named and the level 0 processing 
-should only include sheets with names matching the ''INPUT_SHEET_NAME_RE'' regexp.
+Application-specific
 
-Atomic input types:
+Typical use cases revision history, include, …
 
-- String
-- Double
-- Int
-- DateTime
-
-An empty cell should be treated as an empty string
-
-For details related to specific file formats, see Appendix A.
-
-### Level 1 - Logical file structure
-
-Level 1 processing maps a list of sheets to a single list of blocks of the types detailed below.
-A row on the sheet can only be a member of one block, but all rows need not be in a block.
-The block syntax detailed below is designed so that the rows of the sheet may be split into
-blocks by only considering the first column.
-
-#### Directive block
-
-A directive block start is indicated by a first column string value starting with `***`.
-A directive block is terminated by an empty first column cell or a block start.
-
-#### Table block
-
-A table block start is indicated by a first column string value starting with `**`.
-A table block is terminated by an empty first column cell or a block start.
-
-#### Template block
-
-A table block start is indicated by a first column string value starting with `:`.
-A table block is terminated by an empty first column cell or a block start.
-
-#### Metadata line block
-
-Metadata line blocks are only accepted before any other block types.
-
-A metadata line block start is indicated by a first column containing a string value which is not a valid start marker for any other block and which ends in `:`.
-
-A metadata line block always span exactly one line.
+## Bonus material
 
 ### Level 2 - Block structure
-
-#### Table block
 
 #### Unit mappings
 
@@ -423,30 +323,6 @@ A metadata line block always span exactly one line.
 | 1    | 2    |
 
 #### Template line block
-
-Template data embedded in template files allow input files to be matched against a template, and provide description of input data.
-
-First cell has the form
-
-```
-^(?<level>:{1:3})(?<identifier>(\w*))(\.(?<property>\w+))?\s*$
-```
-
-The number of initial colons decides the level of this template block:
-
-- `:`: Column level
-- `::`: Table level
-- `:::`: File level
-
-The `identifier` must be a file name, table name or column name depending on level. If identifier is omitted, it defaults to:
-
-- the current file name for a file level block.
-- to the latest table block for a table level block.
-- to the most recent column name in a column level block. It is an error to not specify column identifier if no valid column level template block has appeared after the most recent table block.
-
-The `property` is optional. If it appears, it must be one of:
-
-- `description` (default): 
 
 Potential issues:
 conflict: In template-files, we are interested in Level 3 - Inputset structure
