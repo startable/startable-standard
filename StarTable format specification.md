@@ -1,25 +1,20 @@
 # The StarTable format specification
 
-## Summary
+## What is StarTable?
 
-The StarTable format is a container for two-dimensional tables of data,
-in addition to supplementary information elements: metadata, templates,
-and directives. (These elements are, in fact, laid out as tables as
-well.)
+StarTable is a human- and machine-readable format designed to conveniently
+store two-dimensional tables of data. It also supports peripheral information elements such as metadata. 
 
-The StarTable format is file-format agnostic; it is thus, in a sense, a
-meta-format. Any file format that can be used to represent a set of
-“tables” i.e. two-dimensional arrays of cells (in conformity with the
-specifications described in this document), can in principle adhere to
-the StarTable format.
+The StarTable format is file-format agnostic. Any file format that can be used to represent a set of
+“tables” each with columns and rows of cells, can in principle adhere to the StarTable format.
 
 ## History
 
 The StarTable format traces its origins to a software project in the Foundations department of Offshore Wind at [Ørsted](https://orsted.com/) in the mid 2010's. 
 
-By 2018, the format's use had spread to five independent projects within the company due to its recognized convenience and flexibility. A common governance structure was established in December 2018 to ensure that continued development of the StarTable format would remain unified while meeting the needs of its diverse user base. 
+By 2018, the format's use had spread to five independent projects within the company due to its recognized convenience and flexibility. A common governance structure was established in December 2018 to ensure that continued development of the StarTable format would remain unified while meeting the needs of its diverse client projects within Ørsted. 
 
-In February 2019, approval was granted to open source not only the StarTable standard itself, but also the suite of software packages and utilities that allow reading/writing/manipulating/displaying StarTable files in various programming languages and technologies. 
+In February 2019, approval was granted to open source not only the StarTable standard itself, but also the suite of software packages and utilities that allow reading/writing/manipulating/displaying StarTable files in various programming languages and technologies. Governance remains Ørsted-based for the time being, though this is liable to change if, as hoped for, a community of users emerges outside Ørsted. 
 
 
 
@@ -27,45 +22,90 @@ In February 2019, approval was granted to open source not only the StarTable sta
 
 ## Quick introduction to the StarTable format
 
-Here is an example StarTable file as viewed in Microsoft Excel. The various block types that it contains are annotated on the right. 
+Before diving into the formal, detailed specification of the StarTable format, let's have a high-level, example-based look at it. 
+
+Here is an example StarTable file as viewed in Microsoft Excel. In it you'll see the various block types that StarTable supports, as annotated on the right. The blocks are separated by one or more blank lines. 
 
 ![](media/block-examples.png)
 
 ### Intro to table blocks
 
-*Table blocks* are (typically) where you would put most of your data. In some bare-bone cases, this may be the only type of block you'll really want or need in a StarTable file. Which is why we'll spend a few lines discussing them here. 
+*Table blocks* are the meat and potatoes of StarTable, which is why we'll spend a few lines discussing them here. Table blocks are (typically) where you would put most of your data. In some bare-bone cases, this may be the only type of block you'll really want or need in a StarTable file. 
 
 The example file above contains only one table block, but StarTable files can contain any number of table blocks – and of any other block type, for that matter. Nevertheless, let's take a closer look at the example table block:
 
 ![Example table block](media/table-block-example.png)
 
-The first cell of a table block contains the *table name*, in this case, `farm_animals`, preceded by a `**` prefix, which indicates the start of the table block. 
+The first cell of a table block contains the *table name*, in this case, `farm_animals`, preceded by a `**` prefix, which indicates the start of the table block. The table name is usually descriptive of the contents of the table. 
 
-The cell below that is the *destination*; we won't dig into what this is right now, but long story short, it's a fairly free-form field can be used in an application-specific way, typically to establish relationships between various table blocks. The default destination is `all`, meaning no specific relationship is established, i.e. this table applies to the entire context. 
+The cell below that is the *destination*; we won't dig into what this is right now, but long story short, it's a fairly free-form list of space-delimited strings that can be used in an application-specific way, typically to establish relationships between various table blocks. The default destination is `all`, meaning no specific relationship is established, i.e. this table applies to the entire context. 
 
-Below the destination are a number of columns. Each column starts with its *column name* in its top cell, followed by the *column unit* in the cell below that. Then follows an arbitrary number of rows containing values. All columns in the table block must have the same number of rows. 
+Below the destination are an arbitrary number of columns. Each column starts with a *column name* in its top cell, followed by the *column unit* in the cell below that. Then follows an arbitrary number of rows containing values. All columns in a table block must have the same number of rows. 
 
 ### Super quick intro to all the other block types
 
 *Metadata lines* indicate something about the StarTable file itself. In the example above, the file's author is indicated in a metadata line. Their first cell always ends with a `:`.
 
-*Directive blocks* start with `***` followed by the *directive name*. They are fairly free-form their design and usage is application-specific. 
+*Directive blocks* start with `***` followed by the *directive name*. They are fairly free-form and their design and usage is application-specific. 
 
 *Template blocks* tell us something about the contents of the file; either about the file as a whole, the table immediately preceding the template block, or a column in that table. Template blocks start with one or more `:` depending on their level (three for file, two for table, one for column). 
 
 *Comments* are free-text remarks, analogous to comments in source code. You can write comments pretty much anywhere (between blocks and to the right of blocks), as long as they don't cause ambiguity with other blocks and block types. 
 
-### High-level structure of a StarTable file
+### Overview of the structure of a StarTable file
 
-Below is an illustration of the hierarchical structure of a StarTable file. 
+Here is an illustration of the hierarchical structure of a StarTable file:
 
 ![High-level hierarchical structure of the StarTable format](media/hierarchical-structure-diagram.png)
 
-The StarTable format is file-format-agnostic. A StarTable file can be saved as a CSV file, or as an Excel workbook, or as any other file format that can represent columns and rows. Some of these file formats, such as Excel workbooks, can support multiple sheets. Others, such as CSV files, can't; they can contain only one sheet. 
+The StarTable format is file-format-agnostic. A StarTable file can be saved as a CSV file, or as an Excel workbook, or as any other file format that can represent columns and rows. Some of these file formats, such as Excel workbooks, can support multiple *sheets*. Others, such as CSV files, can't; they can contain only one sheet. 
 
 Therefore, a more complete characterization of the example StarTable file shown further above is that it contains only one *sheet*, which in turn only contains one table block (along with a few other blocks of other types). 
 
 This concludes this quick intro to StarTable. What follows is a more formal, detailed, and rigorous description of the StarTable format. 
+
+## Level 0 - Low level file structure
+
+### File format
+
+To be StarTable-ready, a file format must be able to represent a
+two-dimensional array of cells, with the array being of arbitrary length
+and width, and with each cell containing a value of one of the atomic
+types described further below (basically: strings, numbers, datetimes, and valid empty-cell markers). 
+
+Examples of StarTable-ready file formats are CSV (Comma-Separated Values), which can contain only one sheet, and Excel workbooks, which can
+contain multiple sheets. At the time of writing this document, these are
+the only two StarTable file formats used in practice. This
+should not, however, be understood as a formal limitation. In principle,
+nigh any file format could be used for StarTable files – though not
+all to the same degree of convenience. A further conceivable example of
+a file format that can contain multiple sheets would be a compressed
+archive of multiple CSV files.
+
+In file formats where files can contain multiple sheets, each sheet must
+be named such as to be uniquely identifiable.
+
+For details related to specific file formats, see Appendix A.
+
+
+
+The StarTable format is file-format agnostic, in the sense that it can incorporate
+any file format that allows a representation as a one or more sheets each holding 
+an array of cells, where each cell contains an object of one of the atomic input types.
+
+If a format supports multiple sheets, these must be named and the level 0 processing 
+should only include sheets with names matching the ''INPUT_SHEET_NAME_RE'' regexp.
+
+Atomic input types:
+
+- String
+- Double
+- Int
+- DateTime
+
+An empty cell should be treated as an empty string
+
+For details related to specific file formats, see Appendix A.
 
 ## Atomic types and values
 
@@ -125,32 +165,6 @@ detailed discussion of file formats is beyond the scope of this
 document. A summary discussion is provided further below.
 
 
-![High-level hierarchical structure of the StarTable format](media/hierarchical-structure-diagram.png)
-
-File format
------------
-
-To be StarTable-ready, a file format must be able to represent a
-two-dimensional array of cells, with the array being of arbitrary length
-and width, and with each cell containing a value of one of the atomic
-types described in Section 2.
-
-Examples of StarTable-ready file formats are Comma-Separated Values
-(CSV), which can contain only one sheet, and Excel workbook, which can
-contain multiple sheets. At the time of writing this document, these are
-the only two file formats used to represent the StarTable format. This
-should not, however, be understood as a formal limitation. In principle,
-nigh any file format could be used to represent StarTables – though not
-all to the same degree of convenience. A further conceivable example of
-a file format that can contain multiple sheets would be a compressed
-archive of multiple CSV files.
-
-In file formats where files can contain multiple sheets, each sheet must
-be named such as to be uniquely identifiable.
-
-For details related to specific file formats, see Appendix A.
-
-The visual examples in this document have been generated in Excel.
 
 ## Sheets
 
