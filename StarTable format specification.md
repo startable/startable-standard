@@ -3,14 +3,14 @@
 ## What is StarTable?
 
 StarTable is a human- and machine-readable format designed to conveniently
-store two-dimensional tables of data. It also supports peripheral information elements such as metadata. 
+store arbitrary numbers of two-dimensional tables of data. It also supports peripheral information elements such as metadata and application-specific functionality. 
 
 The StarTable format is file-format agnostic. Any file format that can be used to represent a set of
-“tables” each with columns and rows of cells, can in principle adhere to the StarTable format, though in practice, CSV and Excel workbooks are most commonly used.
+tables, each with columns and rows of cells, can in principle adhere to the StarTable format, though in practice, CSV and Excel workbooks are most commonly used.
 
 ### History
 
-The StarTable format traces its origins to a software project in the Foundations department of Offshore Wind at [Ørsted](https://orsted.com/) in the mid 2010's. 
+The StarTable format traces its origins to a single software project in the Foundations department of Offshore Wind at [Ørsted](https://orsted.com/) in the mid 2010's, in which it was, and still is, used by engineers for the entry, input/output, quality assurance, and version control of technical data related to structural calculations for wind turbine foundations. 
 
 By 2018, the format's use had spread to five independent projects within the company due to its recognized convenience and flexibility. A common governance structure was established in December 2018 to ensure that continued development of the StarTable format would remain unified while meeting the needs of its diverse client projects within Ørsted. 
 
@@ -332,10 +332,6 @@ conflict: In template-files, we are interested in Level 3 - Inputset structure
 While the lower levels could potentially form a basis for a generic file
 format, the semantics described in this level are mostly specific to the
 use in DEWP.
-
-#### Folder input path
-
-#### Pondus integration
 
 #### Metadata
 
