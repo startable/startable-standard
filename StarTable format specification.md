@@ -74,9 +74,11 @@ contain multiple sheets. At the time of writing this document, these are
 the only two StarTable file formats used in practice. This
 should not, however, be understood as a formal limitation. In principle,
 nigh any file format could be used for StarTable files – though not
-all to the same degree of convenience. A further conceivable example of
-a file format that can contain multiple sheets would be a compressed
-archive of multiple CSV files.
+all to the same degree of convenience. Further conceivable examples of
+a file format that can contain multiple sheets are:
+
+- JSON
+- A compressed zip archive of multiple CSV files.
 
 In file formats where files can contain multiple sheets, each sheet must
 be named such as to be uniquely identifiable, and the level 0 processing 
