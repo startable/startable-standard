@@ -1,16 +1,24 @@
 # The StarTable data format
 
 StarTable is a human- and machine-readable data format designed to conveniently
-store arbitrary numbers of two-dimensional tables of data. It also supports peripheral information elements such as metadata and application-specific functionality. 
+store an arbitrary number of two-dimensional tables of data. It also supports peripheral information elements such as metadata and application-specific functionality. 
 
 The StarTable format is file-format agnostic. In practice, CSV files and Excel workbooks are most commonly used. But any file format that can be used to represent a set of
-tables, each with columns and rows of cells, can in principle adhere to the StarTable format.
+tables, each with columns and rows of cells, can, in principle, adhere to the StarTable format.
 
-Let's have a high-level, example-based look at the StarTable format. Further details are available in the full [StarTable format specification](https://github.com/startable/startable-standard/blob/master/StarTable%20format%20specification.md).
+## Parsers and utilities
+
+StarTable parsers exist for Python, MATLAB, and C#. They can currently parse StarTable files in CSV and Excel format. 
+
+The StarTable Editor is an Excel add-in that helps humans read, write, quality-control, and prettify StarTable files. 
+
+These have all been developed in private repos, but in March 2019, it was decided to open-source them, and they will be placed on [GitHub](https://github.com/startable) in due course. 
 
 ## Quick overview of the StarTable format
 
-Here is an example StarTable file as viewed in Microsoft Excel. In it you'll see the various block types that StarTable supports, as annotated on the right. 
+Let's have a high-level, example-based look at the StarTable format. Further details are available in the full [StarTable format specification](https://github.com/startable/startable-standard/blob/master/StarTable%20format%20specification.md).
+
+Below is an example StarTable file as viewed in Microsoft Excel. In it you'll see the various block types that StarTable supports, as annotated on the right. 
 
 Blocks are separated by one or more blank lines (except template blocks, which may be contiguous). 
 
@@ -26,7 +34,7 @@ The example file above contains only one table block, but StarTable files can co
 
 Let's take a closer look at the example table block:
 
-![Example table block](C:/Users/JEACO/Source/startable-standard/media/table-block-example.png)
+![Example table block](media/table-block-example.png)
 
 Table blocks start with a cell containing a `**` prefix followed by the *table name*, in this case, `farm_animals`. The table name is usually descriptive of the what the table contains. 
 
@@ -53,8 +61,9 @@ Below the destination are an arbitrary number of columns. Each column starts wit
 
 Here is an illustration of the hierarchical structure of a StarTable file:
 
-![High-level hierarchical structure of the StarTable format](C:/Users/JEACO/Source/startable-standard/media/hierarchical-structure-diagram.png)
+![High-level hierarchical structure of the StarTable format](media/hierarchical-structure-diagram.png)
 
-The StarTable format is file-format-agnostic. A StarTable file can be saved as a CSV file, or as an Excel workbook, or as any other file format that can represent columns and rows. Some of these file formats, such as Excel workbooks, can support multiple *sheets*. Others, such as CSV files, can't; they can contain only one sheet. 
+A StarTable file can be saved as a CSV file, or as an Excel workbook, or as any other file format that can represent columns and rows. Some of these file formats, such as Excel workbooks, can support multiple *sheets*. Others, such as CSV files, can typically contain only one sheet. 
 
 Therefore, a more complete characterization of the example StarTable file shown further above is that it contains only one *sheet*, which in turn only contains one table block (along with a few other blocks of other types). 
+
