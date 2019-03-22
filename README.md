@@ -24,7 +24,7 @@ Blocks are separated by one or more blank lines (except template blocks, which m
 
 The type of any given block can be unambiguously determined by the contents of its first cell in the leftmost column. 
 
-![](C:/Users/JEACO/Source/startable-standard/media/block-examples.png)
+![](media/block-examples.png)
 
 ### Table blocks
 
