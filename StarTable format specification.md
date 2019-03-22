@@ -62,6 +62,8 @@ This concludes this quick intro to StarTable. What follows is a more formal, det
 
 ## Level 0 - Low level file structure
 
+Level 0 parser is file-format specific. Splits file in blocks. 
+
 ### File format
 
 The StarTable format is file-format agnostic. To be StarTable-ready, a given file format must be able to represent a
@@ -82,23 +84,21 @@ a file format that can contain multiple sheets are:
 
 In file formats where files can contain multiple sheets, each sheet must
 be named such as to be uniquely identifiable, and the level 0 processing 
-should only include sheets with names matching the ''INPUT_SHEET_NAME_RE'' regexp.
+should only include sheets with names matching the ''INPUT_SHEET_NAME_RE'' regexp. ?????<<< possible feature: an application-specific regex
 
 ### Atomic types and values
 
 Cells each contain a value of one of the following atomic types:
 
 -   String
-
--   Floating-point number
-
--   Integer
-
--   DateTime
+-   Numeric types:
+    -   Floating-point number
+    -   Integer
+    -   DateTime
 
 Empty cells are to be treated as containing an empty string. 
 
-Floating-point and integer cells may not be left empty. Null or missing values may 
+Numeric type cells may not be left empty. Null or missing values may 
 be represented by either of the following valid null markers: `-`, `nan`, `NaN`, or `NAN`.
 
 #### Restrictions on strings
@@ -108,7 +108,7 @@ Strings may not contain characters used to represent the end of a line
 between cell content and the end of a row. Note that this remark applies
 throughout this document: there are a few instances where we indicate
 that a given field can consist of “any string”; this should be
-understood as, any string not including these forbidden characters.
+understood as shorthand for, any string not including these aforementioned forbidden characters.
 
 #### Additional restrictions on symbol strings
 
@@ -133,8 +133,7 @@ type.
 
 Sheets are contained in a file. Some file formats (such as CSV) can contain only one sheet, while others (e.g. Excel workbook) can contain multiple sheets. Since the StarTable format is file-format
 agnostic, files are not part of the StarTable format proper, and a
-detailed discussion of file formats is beyond the scope of this
-document. 
+detailed discussion of file formats is beyond the scope of this document. 
 
 ## Sheets
 
@@ -227,7 +226,11 @@ prefix `**`, with a directive block start marker).
 The destination list is in the first-column cell on the second row of
 the table block. It is a space-delimited list of destination symbols.
 
-??????????
+Use cases:
+
+- Establishing relationshipe between tables
+- Namespacing
+- ???? give examples
 
 #### Table columns
 
@@ -304,11 +307,15 @@ The main purpose of the template system is to aid work on the file level, where 
 
 ### Metadata line block
 
-\#\#\#
+Info about the file. Examples are: author, verified by, etc.
+
+Reader can implement a system of pseudonyms referring to canonical field names. ?????????
 
 ### Directive block
 
-\#\#\#\#
+Syntax is ***
+
+Reader sends these to the application as cell arrays, to be handled by application
 
 Tables without destinations or units
 
@@ -316,47 +323,3 @@ Application-specific
 
 Typical use cases revision history, include, …
 
-## Bonus material
-
-### Level 2 - Block structure
-
-#### Unit mappings
-
-| foo  | bar  |
-| ---- | ---- |
-| 1    | 2    |
-
-#### Template line block
-
-Potential issues:
-conflict: In template-files, we are interested in Level 3 - Inputset structure
-
-While the lower levels could potentially form a basis for a generic file
-format, the semantics described in this level are mostly specific to the
-use in DEWP.
-
-#### Metadata
-
-##### Metadata mapping
-
-##### Revision data table
-
-#### File names
-
-## Appendix A: Low level file format details
-
-### Excel
-
-### CSV - Semicolon-separated file
-
-## Appendix B – parser implementation example
-
-Level -1 – file (possibly containing more than 1 sheet)
-
-Level 0 – sheet
-
-Level 1 - 2D array of atomic values, yield by row
-
-Level 2 – list of blocks (of various types, parsed)
-
-Level 3 – interpret blocks as needed – esp directives
