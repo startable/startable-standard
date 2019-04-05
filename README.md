@@ -12,7 +12,7 @@ StarTable parsers exist for Python, MATLAB, and C#. They can currently parse Sta
 
 The StarTable Editor is an Excel add-in that helps humans read, write, quality-control, and prettify StarTable files. 
 
-These have all been developed in private repos, but in March 2019, it was decided to open-source them, and they will be placed on [GitHub](https://github.com/startable) in due course. 
+These have all been developed in private repos, but in March 2019, it was decided to open-source them, and they will be placed on [GitHub](https://github.com/startable) in due course.  
 
 ## Quick overview of the StarTable format
 
