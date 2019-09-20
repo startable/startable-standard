@@ -1,14 +1,34 @@
 # The StarTable data format
 
-StarTable is a human- and machine-readable data format designed to conveniently
-store an arbitrary number of two-dimensional tables of data. It also supports peripheral information elements such as metadata and application-specific functionality. 
+StarTable is a data format designed to conveniently store an arbitrary number of two-dimensional tables of data in a way that is 
 
-The StarTable format is file-format agnostic. In practice, CSV files and Excel workbooks are most commonly used. But any file format that can be used to represent a set of
-tables, each with columns and rows of cells, can, in principle, adhere to the StarTable format.
+* human- and machine-readable; and
+* easy to edit, audit, and version. 
+
+In addition to tabular data, StarTable also supports 
+
+* metadata at the file, table, and columns levels; 
+* templating and comments; and
+* application-specific functionality such as relations between tables and include statements. 
+
+The StarTable format is file-format agnostic. In practice, CSV files and Excel workbooks are most commonly used to store StarTable-formatted data. But any file format that can be used to represent a set of tables, each with columns and rows of cells, can, in principle, adhere to the StarTable format.
+
+## What problem StarTable solves
+
+StarTable is geared towards easing human quality assurance while remaining machine-readable and versionable. Thus it differentiates itself from other data formats:
+
+- Supports "generalist" file formats such as Excel and CSV, which: 
+  - Are easy to open/edit/QA with general-purpose software available on most machines (i.e. including non-technical stakeholders); and
+  - Can be versioned with enterprise document management systems and/or text-based version control systems.
+- One file or many files – up to you
+  - One file *can* contain all the tables required for a given project. 
+  - Though you can also *choose* to split one StarTable file into multiple files according to some convenient logic; for example, different files having different owners responsible for their content, under different versioning.
+
+Alternate data formats such as SQLite, other databases, and zip archives of text files, do not naturally fulfill these needs. 
 
 ## Parsers and utilities
 
-StarTable parsers exist for Python, MATLAB, and C#. They can currently parse StarTable files in CSV and Excel format. 
+StarTable parsers exist for [Python](https://github.com/startable/startables-python), MATLAB, and C#. They can currently parse StarTable files in CSV and Excel format. 
 
 The StarTable Editor is an Excel add-in that helps humans read, write, quality-control, and prettify StarTable files. 
 
