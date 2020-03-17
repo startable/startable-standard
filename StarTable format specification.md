@@ -64,10 +64,9 @@ Cells each contain a value of one of the following atomic types:
 
 - String
 - Numeric types:
-  - Floating-point number
-  - Integer
+  - Number (no distinction is made between e.g. floating-point and integer)
+  - Boolean (represented as 1 or 0)
   - DateTime
-  - Boolean, represented as 1 or 0
 
 String type cells that are empty are to be treated as containing an empty string. 
 
@@ -243,12 +242,12 @@ The column name must be unique within the current table i.e. no two columns of a
 The second cell of a table column is the *unit* symbol, where "unit" is used as shorthand for "data type / unit indicator". The unit specifies how the column’s values should be interpreted semantically. It does not necessarily represent a physical unit of measurement. 
 Valid units and their semantic interpretation are described in the table below.
 
-| Unit                       | Semantic data type of column values                          |
+| Unit                       | Semantic interpretation of column values                     |
 | -------------------------- | ------------------------------------------------------------ |
 | `text`                     | Text                                                         |
 | `datetime`                 | Datetime value, with format conforming to [ISO 8601](https://xkcd.com/1179/). |
 | `onoff`                    | Boolean, represented as `1` for True, `0` for False.         |
-| `-` <br>(a single "minus") | Unitless / non-dimensional numerical values                  |
+| `-` <br>(a single "minus") | Unitless (non-dimensional) numerical values                  |
 | Any other string           | Numerical values with physical unit specified by the unit string. |
 
 
