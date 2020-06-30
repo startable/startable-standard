@@ -64,11 +64,11 @@ Cells each contain a value of one of the following atomic types:
 
 - String
 - Numeric types:
-  - Floating-point number
-  - Integer
+  - Number (no distinction is made between e.g. floating-point and integer)
+  - Boolean (represented as 1 or 0)
   - DateTime
 
-Empty cells are to be treated as containing an empty string. 
+String type cells that are empty are to be treated as containing an empty string. 
 
 Numeric type cells may not be left empty. Null or missing values may 
 be represented by either of the following valid null markers: `-`, `nan`, `NaN`, or `NAN`.
@@ -239,14 +239,15 @@ The column name must be unique within the current table i.e. no two columns of a
 
 ##### Unit
 
-The second cell of a table column is the *unit* symbol, where "unit" is used as shorthand for "data type / unit indicator". The unit specifies how the column’s values should be interpreted. It does not necessarily represent a physical unit. 
-Valid units and their interpretation are described in the table below.
+The second cell of a table column is the *unit* symbol, where "unit" is used as shorthand for "data type / unit indicator". The unit specifies how the column’s values should be interpreted semantically. It does not necessarily represent a physical unit of measurement. 
+Valid units and their semantic interpretation are described in the table below.
 
-| Unit                       | Data type of column values                                   |
+| Unit                       | Semantic interpretation of column values                     |
 | -------------------------- | ------------------------------------------------------------ |
 | `text`                     | Text                                                         |
 | `datetime`                 | Datetime value, with format conforming to [ISO 8601](https://xkcd.com/1179/). |
-| `-` <br>(a single "minus") | Unitless / non-dimensional numerical values                  |
+| `onoff`                    | Boolean, represented as `1` for True, `0` for False.         |
+| `-` <br>(a single "minus") | Unitless (non-dimensional) numerical values                  |
 | Any other string           | Numerical values with physical unit specified by the unit string. |
 
 
@@ -259,7 +260,7 @@ of any of the valid atomic types, but must comply with the column's unit.
 
 Empty string is a legal value for cells in `text` columns. However, if the first column of a table block is of unit `text` and an empty string is encountered in this column, this will trigger the end of the table block. Therefore, empty strings must not be entered in the first column of a table block. 
 
-If an empty string is inadvertently entered mid-column, any data in this and subsequent rows will not be interpreted as being part of this table block. A faithful StarTable parser will interpret them as being comments and ignore them, until the start of a new block is encountered. 
+If an empty string is inadvertently entered as part of the first column, any data in this and subsequent rows will not be interpreted as being part of this table block. A faithful StarTable parser will interpret them as being comments and ignore them, until the start of a new block is encountered. 
 
 ### Template block
 
