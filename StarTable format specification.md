@@ -142,8 +142,8 @@ functionality. The different block types are summarized in this table:
 
 | Block type    | Start marker first-column cell content                       | End marker                                             | Description & remarks                                        |
 | ------------- | ------------------------------------------------------------ | ------------------------------------------------------ | ------------------------------------------------------------ |
-| Directive     | `***` followed by directive block name (which may not contain `*`) | - Empty first column cell; or<br>- New block start     | Placeholder for a variety of functions e.g.  <br> - Version control <br> - Allowing tables from various sources to be added dynamically to the set of tables statically present in a sheet |
-| Table         | `**`  followed by table name                                               (which may not contain `*`) | - Empty first column cell; or <br> - New block start   | Primary data content                                         |
+| Directive     | `***` followed by directive block name                       | - Empty first column cell; or<br>- New block start     | Placeholder for a variety of functions e.g.  <br> - Version control <br> - Allowing tables from various sources to be added dynamically to the set of tables statically present in a sheet |
+| Table         | `**`  followed by table name                                               (which may not start with `*`) | - Empty first column cell; or <br> - New block start   | Primary data content                                         |
 | Template      | Starts with `:`                                              | -   Empty first column cell; or <br> - New block start | Template data embedded in template files allow input files to be matched against a template, and provide a description of input data. |
 | Metadata line | Ends with `:`, and is not a valid start marker for one of the other block types | End of line                                            | Are only accepted at the top of a sheet, before any other block types.<br />Provide information about the current sheet.<br />Always span exactly one line. |
 
@@ -152,8 +152,6 @@ The following sections describe the structure of these block types.
 ### Metadata line block
 
 Metadata lines contain information about the file. Typical metadata fields are: author, verified by, etc.
-
-Metadata lines are only allowed on the first consecutive lines of a file. 
 
 StarTable parsers may implement a system of metadata field pseudonyms referring to canonical field names. 
 
@@ -172,21 +170,21 @@ Example use cases:
 
 A table block consists of:
 
--   The start marker prefix, `**`, followed by a *table name* and, optionally, the *transpose decorator* (`*t` or `*T`)
+-   The start marker prefix, `**`, followed by a *table name*;
 
 -   *Destination list*, indicating what content this table applies to;
     and
 
 -   An arbitrary number of vertical *table columns*, arranged
-    side-by-side horizontally, or, if the transpose decorator is present, horizontally one below the other. Each column consists of:
-    -   In the first cell, a *column name*, describing the contents of the column;
+    side-by-side horizontally. Each column consists of:
+    -   A *column name*, describing the contents of the column;
 
-    -   In the second cell, a data type / unit indicator, hereafter simply referred to in shorthand as *unit*, used to distinguished between
+    -   A data type / unit indicator, hereafter simply referred to in shorthand as *unit*, used to distinguished between
         text content, unitless numerical content, and numerical content
         with units; and
 
-    -   In the following cells, an arbitrary number of values. All columns within a given
-        table must have the same number of value cells. 
+    -   An arbitrary number of values. All columns within a given
+        table must have the same number of rows i.e. values. 
 
 An example of these elements is illustrated this figure: 
 
@@ -195,7 +193,7 @@ An example of these elements is illustrated this figure:
 
 Generic example of a table block:
 
-| `**table_name` |                  |                  |       |
+| `table name`   |                  |                  |       |
 | ------------------ | ---------------- | ---------------- | ----- |
 | **`destinations`** |                  |                  |       |
 | **`col 1 name`**   | **`col 2 name`** | **`col 3 name`** | **…** |
@@ -204,16 +202,6 @@ Generic example of a table block:
 | `col 1 val 2`      | `col 2 val 2`    | `col 3 val 2`    | …     |
 | `col 1 val 3`      | `col 2 val 3`    | `col 3 val 3`    | …     |
 | …                  | …                | …                | …     |
-
-and of a transposed table block:
-
-| `**table_name*T`   |                  |                  |             |           |       |
-| ------------------ | ---------------- | ---------------- | ----------- | --------- | ----- |
-| **`destinations`** |                  |                  |             |           |       |
-| **`col 1 name`**   | **`col 1 unit`** | `col 1 val 1`    | col 1 val 2 | col 1 val 3 | **…** |
-| **`col 2 name`**  | **`col 2 unit`** | `col 2 val 1`    | col 2 val 2 | col 2 val 3 | **…** |
-| **`col 3 name`**   | **`col 3 unit`** | `col 3 val 1`    | col 3 val 2 | col 3 val 3 | **…** |
-| …                  | …                | …                |             |           | …     |
 
 We will now describe the elements of a table block. 
 
@@ -237,16 +225,10 @@ The use of destinations is application-specific. Typical use cases include:
 - Establishing relationships between table blocks
 - Namespacing
 
-#### Columns
+#### Table columns
 
 Table columns start on the third row of the table block and occupy the
 remaining rows of the table block all the way down to its end. 
-
-By default, columns extend vertically, laid out side-by-side horizontally, as one would expect from the name "column". 
-
-However, if the table's name is appended with the transpose decorator (`*t` or `*T`), this indicates that the table is transposed such that its "columns" extend horizontally, and are laid out vertically in successive lines. In this case, each "column's" cells are its line's cells. 
-
-The transposed layout option is provided for convenience. A table that has a large number of columns with only a few values in each becomes wide and shallow in the default layout. Users may find such tables difficult to edit or visually displeasing. Transposing the table restores a narrow, deep aspect ratio. A typical use case for the transposed layout is a table specifying a large number of parameters in the form of (name, unit, value) triplets. 
 
 ##### Column name
 
@@ -260,13 +242,13 @@ The column name must be unique within the current table i.e. no two columns of a
 The second cell of a table column is the *unit* symbol, where "unit" is used as shorthand for "data type / unit indicator". The unit specifies how the column’s values should be interpreted semantically. It does not necessarily represent a physical unit of measurement. 
 Valid units and their semantic interpretation are described in the table below.
 
-| Unit                            | Semantic interpretation of column values                     |
-| ------------------------------- | ------------------------------------------------------------ |
-| `text`                          | Text                                                         |
-| `datetime`                      | Datetime value, with format conforming to [ISO 8601](https://xkcd.com/1179/). |
-| `onoff`                         | Boolean, represented as `1` for True, `0` for False.         |
-| `-` <br>(a single "minus" sign) | Unitless (non-dimensional) numerical values                  |
-| Any other string                | Numerical values with physical unit specified by the unit string. |
+| Unit                       | Semantic interpretation of column values                     |
+| -------------------------- | ------------------------------------------------------------ |
+| `text`                     | Text                                                         |
+| `datetime`                 | Datetime value, with format conforming to [ISO 8601](https://xkcd.com/1179/). |
+| `onoff`                    | Boolean, represented as `1` for True, `0` for False.         |
+| `-` <br>(a single "minus") | Unitless (non-dimensional) numerical values                  |
+| Any other string           | Numerical values with physical unit specified by the unit string. |
 
 
 ##### Values
@@ -276,7 +258,7 @@ of any of the valid atomic types, but must comply with the column's unit.
 
 #### Gotcha: empty string in first column ends table block
 
-The empty string is a legal value for cells in `text` columns. However, if the first column of a table block is of unit `text` and an empty string is encountered in this column, this will trigger the end of the table block. Therefore, empty strings are forbidden in the first column of a table block. 
+Empty string is a legal value for cells in `text` columns. However, if the first column of a table block is of unit `text` and an empty string is encountered in this column, this will trigger the end of the table block. Therefore, empty strings must not be entered in the first column of a table block. 
 
 If an empty string is inadvertently entered as part of the first column, any data in this and subsequent rows will not be interpreted as being part of this table block. A faithful StarTable parser will interpret them as being comments and ignore them, until the start of a new block is encountered. 
 
