@@ -172,7 +172,7 @@ Example use cases:
 
 A table block consists of:
 
--   The start marker prefix, `**`, followed by a *table name* and, optionally, the *transpose decorator* (`*t` or `*T`)
+-   The start marker prefix, `**`, followed by a *table name* and, optionally, the *transpose decorator* (`*`)
 
 -   *Destination list*, indicating what content this table applies to;
     and
@@ -207,7 +207,7 @@ Generic example of a table block:
 
 and of a transposed table block:
 
-| `**table_name*T`   |                  |                  |             |           |       |
+| `**table_name*`   |                  |                  |             |           |       |
 | ------------------ | ---------------- | ---------------- | ----------- | --------- | ----- |
 | **`destinations`** |                  |                  |             |           |       |
 | **`col 1 name`**   | **`col 1 unit`** | `col 1 val 1`    | col 1 val 2 | col 1 val 3 | **…** |
@@ -244,7 +244,7 @@ remaining rows of the table block all the way down to its end.
 
 By default, columns extend vertically, laid out side-by-side horizontally, as one would expect from the name "column". 
 
-However, if the table's name is appended with the transpose decorator (`*t` or `*T`), this indicates that the table is transposed such that its "columns" extend horizontally, and are laid out vertically in successive lines. In this case, each "column's" cells are its line's cells. 
+However, if the table's name is appended with the transpose decorator (`*`), this indicates that the table is transposed such that its "columns" extend horizontally, and are laid out vertically in successive lines. In this case, each "column's" cells are its line's cells. 
 
 The transposed layout option is provided for convenience. A table that has a large number of columns with only a few values in each becomes wide and shallow in the default layout. Users may find such tables difficult to edit or visually displeasing. Transposing the table restores a narrow, deep aspect ratio. A typical use case for the transposed layout is a table specifying a large number of parameters in the form of (name, unit, value) triplets. 
 
