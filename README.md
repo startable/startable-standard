@@ -40,7 +40,7 @@ Let's have a high-level, example-based look at the StarTable format. Further det
 
 Below is an example StarTable file as viewed in Microsoft Excel. In it you'll see the various block types that StarTable supports, as annotated on the right. 
 
-Blocks are separated by one or more blank lines (except template blocks, which may be contiguous). 
+Blocks are separated by one or more blank lines (except template lines, which may be contiguous; and metadata lines, which must be contiguous at the top of the file). 
 
 The type of any given block can be unambiguously determined by the contents of its first cell in the leftmost column. 
 
@@ -73,7 +73,7 @@ Below the destination are an arbitrary number of columns. Each column starts wit
 
 *Directive blocks* start with `***` followed by the *directive name*. The contents of directive blocks are to be passed as a cell array to the client application. One use case is "include" statements, indicating to the application that additional StarTable files are to be read. 
 
-*Template blocks* tell us something about the contents of the file; either about the file as a whole, the table immediately preceding the template block, or a column in that table. Template blocks start with one or more `:` depending on their level (two for table, one for column). 
+*Template lines* tell us something about the expected contents of tables; either a table as a whole, or a column in that table. They are used for matching against templates, and to guide the human user. Template blocks start with one or more `:` depending on their level (two for table, one for column). 
 
 *Comments* are free-text remarks, analogous to comments in source code. You can write comments pretty much anywhere (between blocks and to the right of blocks), as long as they don't cause ambiguity with other blocks and block types. 
 

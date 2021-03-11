@@ -140,12 +140,12 @@ The primary content of StarTable files is typically placed in “table” blocks
 additional block types that provide supplementary information and
 functionality. The different block types are summarized in this table:
 
-| Block type    | Start marker first-column cell content                       | End marker                                             | Description & remarks                                        |
-| ------------- | ------------------------------------------------------------ | ------------------------------------------------------ | ------------------------------------------------------------ |
-| Directive     | `***` followed by directive block name                       | - Empty first column cell; or<br>- New block start     | Placeholder for a variety of functions e.g.  <br> - Version control <br> - Allowing tables from various sources to be added dynamically to the set of tables statically present in a sheet |
-| Table         | `**`  followed by table name, optionally followed by the transpose decorator `*` | - Empty first column cell; or <br> - New block start   | Primary data content                                         |
-| Template      | Starts with `:`                                              | -   Empty first column cell; or <br> - New block start | Template data embedded in template files allow input files to be matched against a template, and provide a description of input data. |
-| Metadata line | Ends with `:`, and is not a valid start marker for one of the other block types | End of line                                            | Are only accepted at the top of a sheet, before any other block types.<br />Provide information about the current sheet.<br />Always span exactly one line. |
+| Block type    | Start marker first-column cell content                       | End marker                                           | Description & remarks                                        |
+| ------------- | ------------------------------------------------------------ | ---------------------------------------------------- | ------------------------------------------------------------ |
+| Directive     | `***` followed by directive block name                       | - Empty first column cell; or<br>- New block start   | Placeholder for a variety of functions e.g.  <br> - Version control <br> - Allowing tables from various sources to be added dynamically to the set of tables statically present in a sheet |
+| Table         | `**`  followed by table name, optionally followed by the transpose decorator `*` | - Empty first column cell; or <br> - New block start | Primary data content                                         |
+| Template line | Starts with `:`                                              | End of line                                          | Template provide a description of the expected input data. Used for matching against templates, and to guide the human user. |
+| Metadata line | Ends with `:`, and is not a valid start marker for one of the other block types | End of line                                          | Are only accepted at the top of a sheet, before any other block types.<br />Provide information about the current sheet.<br />Always span exactly one line. |
 
 The following sections describe the structure of these block types.
 
@@ -280,25 +280,25 @@ The empty string is a legal value for cells in `text` columns. However, if the f
 
 If an empty string is inadvertently entered as part of the first column, any data in this and subsequent rows will not be interpreted as being part of this table block. A faithful StarTable parser will interpret them as being comments and ignore them, until the start of a new block is encountered. 
 
-### Template block
+### Template line
 
-*Template blocks* tell us something about the expected contents of tables; either a table as a whole, or a column in that table. 
+*Template lines* tell us something about the expected contents of tables; either a table as a whole, or a column in that table. 
 Template data allow input files to be validated against a template, and provide a description of the expected input data.
 
-A template block start marker cell has the regex form
+A template line start marker cell has the regex form
 
 ```
 ^(?level:{1:2})(?identifier(\w*))(\.(?property\w+))?\s*$
 ```
 
 The number of colons in the prefix determine the level to which this
-template block applies. The characteristics of the three template block
+template line applies. The characteristics of the two template block
 levels are summarized in this table:
 
 | Start marker prefix | Level  | Identifier must be a… | Default identifier (if omitted)                                                                                                                                                          | Default property (if omitted) |
 |---------------------|--------|-----------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------|
 | `::` <br>(two colons) | Table  | Table name            | Latest table block | description                   |
-| `:` <br>(a single colon) | Column | Column name           | Most recent column name in a column level template block. <br />It is an error not to specify a column identifier if no valid column level template block has appeared after the most recent table template block. | description                   |
+| `:` <br>(a single colon) | Column | Column name           | Most recent column name in a column level template line. <br />It is an error not to specify a column identifier if no valid column level template block has appeared after the most recent table template line. | description                   |
 
 The property is optional. If it appears, it must be one of:
 
