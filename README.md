@@ -73,7 +73,7 @@ Below the destination are an arbitrary number of columns. Each column starts wit
 
 *Directive blocks* start with `***` followed by the *directive name*. The contents of directive blocks are to be passed as a cell array to the client application. One use case is "include" statements, indicating to the application that additional StarTable files are to be read. 
 
-*Template blocks* tell us something about the contents of the file; either about the file as a whole, the table immediately preceding the template block, or a column in that table. Template blocks start with one or more `:` depending on their level (three for file, two for table, one for column). 
+*Template blocks* tell us something about the contents of the file; either about the file as a whole, the table immediately preceding the template block, or a column in that table. Template blocks start with one or more `:` depending on their level (two for table, one for column). 
 
 *Comments* are free-text remarks, analogous to comments in source code. You can write comments pretty much anywhere (between blocks and to the right of blocks), as long as they don't cause ambiguity with other blocks and block types. 
 

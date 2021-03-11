@@ -282,15 +282,13 @@ If an empty string is inadvertently entered as part of the first column, any dat
 
 ### Template block
 
-*Template blocks* tell us something about the contents of the file; either about the file as a whole, the table immediately preceding the template block, or a column in that table. 
+*Template blocks* tell us something about the expected contents of tables; either a table as a whole, or a column in that table. 
+Template data allow input files to be validated against a template, and provide a description of the expected input data.
 
-Template data embedded in template files allow input files to be matched
-against a template, and provide description of input data.
-
-Start marker cell has the regex form
+A template block start marker cell has the regex form
 
 ```
-^(?level:{1:3})(?identifier(\w*))(\.(?property\w+))?\s*$
+^(?level:{1:2})(?identifier(\w*))(\.(?property\w+))?\s*$
 ```
 
 The number of colons in the prefix determine the level to which this
@@ -299,15 +297,15 @@ levels are summarized in this table:
 
 | Start marker prefix | Level  | Identifier must be a… | Default identifier (if omitted)                                                                                                                                                          | Default property (if omitted) |
 |---------------------|--------|-----------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------|
-| `:::` <br>(three colons) | Sheet  | File name             | Current file name   | description                   |
 | `::` <br>(two colons) | Table  | Table name            | Latest table block | description                   |
-| `:` <br>(a single colon) | Column | Column name           | Most recent column name in a column level block. <br />It is an error not to specify a column identifier if no valid column level template block has appeared after the most recent table block. | description                   |
+| `:` <br>(a single colon) | Column | Column name           | Most recent column name in a column level template block. <br />It is an error not to specify a column identifier if no valid column level template block has appeared after the most recent table template block. | description                   |
 
 The property is optional. If it appears, it must be one of:
 
 | Property name         | Applies to file | Applies to table | Applies to column | Semantics |
 | --------------------- | :--------: | :--------: | :--------: | ---- |
 | `description` (default) | x          | x         | x | Use column 2 as description of this item. Multiple descriptions may be given, in which case a single multi-line description text should be reported. |
+| `choice`              |            |           | x | Column 2 states a valid value for this column. Multiple successive `choice` lines define what values are allowable in this column (similar to an enum); other values are to be considered invalid. |
 | `case`                  |            |           | x | This component is optional |
 | `use_template`         |            |           | x | For each value *s*, the string [col 3]+*s*+[col 4] is a table name for a table that should match the template in [col 2]. |
 | `is_template`          | x          |           | | This table should only be used for templating |
@@ -315,12 +313,12 @@ The property is optional. If it appears, it must be one of:
 
 Examples:
 
-| Start marker     | Applies to                        | Property |
-| ---------------- | --------------------------------- | -------- |
-| `:n_legs`        | Column `n_legs` in previous table | N/A      |
-| `::farm_animals` | Table `farm_animals`              | N/A      |
-|                  |                                   |          |
-|                  |                                   |          |
+| Start marker      | Applies to                          | Property                |
+| ----------------- | ----------------------------------- | ----------------------- |
+| `:n_legs`         | Column `n_legs` in previous table   | `description` (default) |
+| `::farm_animals`  | Table `farm_animals`                | `description` (default) |
+| `:species.choice` | Column `species` in previous table. | `choice`                |
+|                   |                                     |                         |
 
 The main purpose of the template system is to aid work on the file level, where destinations cannot be resolved. For this reason, tables are identified by table names only for the purpose of template-matching.
 
