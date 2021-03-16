@@ -313,12 +313,12 @@ The property is optional. If it appears, it must be one of:
 
 Examples:
 
-| Start marker      | Applies to                          | Property                |
-| ----------------- | ----------------------------------- | ----------------------- |
-| `:n_legs`         | Column `n_legs` in previous table   | `description` (default) |
-| `::farm_animals`  | Table `farm_animals`                | `description` (default) |
-| `:species.choice` | Column `species` in previous table. | `choice`                |
-|                   |                                     |                         |
+| Start marker      | Applies to                           | Property                |
+| ----------------- | ------------------------------------ | ----------------------- |
+| `:n_legs`         | Column `n_legs` in preceding table   | `description` (default) |
+| `::farm_animals`  | Table `farm_animals`                 | `description` (default) |
+| `:species.choice` | Column `species` in preceding table. | `choice`                |
+|                   |                                      |                         |
 
 The main purpose of the template system is to aid work on the file level, where destinations cannot be resolved. For this reason, tables are identified by table names only for the purpose of template-matching.
 
